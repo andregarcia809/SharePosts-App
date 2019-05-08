@@ -1,4 +1,4 @@
-<?php require APPROOT . '/views/include/header.php';?>
+<?php require APPROOT . '/views/include/header.php'; ?>
 <div class="jumbotron jumbotron-fluid">
 	<div class="container">
 		<h1 class="display-3"><?php echo $data['title']; ?></h1>
