@@ -11,7 +11,7 @@ class Core {
 
 	public function __construct() {
 		$url = $this->getUrl();
-		
+
 		//Look in controllers for first value
 		if(file_exists('../app/controllers/' .ucwords($url[0]). '.php')) {
 			// If exist set as controller
@@ -36,7 +36,7 @@ class Core {
 		}
 
 		// Get params
-		
+
 		$this->params = $url ? array_values($url) : [];
 
 		// Call a callback with array of params

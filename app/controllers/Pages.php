@@ -1,14 +1,18 @@
-<?php 
+<?php
 	class Pages extends Controller {
 		public function __construct() {
-			
+
 		}
 
 		public function index() {
+			if (isLoggedIn()) {
+				redirect('posts');
+			}
+
 			$data = [
 				'title' => 'SharePosts',
 				'description' => 'Simple social network built on the Traversy MVC php framework'
-				
+
 			];
 
 			$this->view('pages/index', $data);
@@ -23,4 +27,3 @@
 			 $this->view('pages/about', $data);
 		}
 	}
-	

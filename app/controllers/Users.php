@@ -41,7 +41,7 @@
 						}
 					}
 				}
-					
+
 				// Validate password
 				if (empty($data['password'])) {
 					 $data['password_error'] = 'Please enter password';
@@ -61,8 +61,8 @@
 
 				// Make sure errors are empty
 				if (empty($data['name_error']) && empty($data['email_error']) && empty($data['password_error']) && empty($data		['confirm_password_error'])) {
-					// validated 
-					
+					// validated
+
 					//Hash password
 					$data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
 
@@ -110,7 +110,7 @@
 					'email_error' => '',
 					'password_error' => '',
 				];
-				
+
 				// Validate email
 				if (empty($data['email'])) {
 					$data['email_error'] = 'Please enter email';
@@ -122,13 +122,35 @@
 
 				// Validate password
 				if (empty($data['password'])) {
-					 $data['password_error'] = 'Please enter password';
+					 $data['password_error'] = 'Please enter your password';
 				}
 
+				// Check for user email
+				if ($this->userModel->findUserByEmail($data['email'])) {
+					// User found
+				}
+				else if (empty($data['email'])) {
+					$data['email_error'] = 'Please enter your email';
+				}
+				else if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+					$data['email_error'] = 'Please enter a valid email';
+				} else{
+					// User Not found
+					$data['email_error'] = 'No user found';
+				}
 				// Make sure errors are empty
 				if (empty($data['email_error']) && empty($data['password_error'])) {
-					// validated 
+					// validated
+					// Check and set loggin user
+					$loggedInUser = $this->userModel->login($data['email'], $data['password']);
+					if ($loggedInUser) {
+						// Create session
+						$this->createUserSession($loggedInUser);
+					} else {
+						$data['password_error'] = 'Password incorrect';
 
+						$this->view('users/login', $data);
+					}
 				} else {
 					$this->view('users/login', $data);
 				}
@@ -144,5 +166,20 @@
 				// Load view
 				$this->view('users/login', $data);
 			}
+		}
+
+		public function createUserSession($user) {
+			$_SESSION['user_id'] = $user->id;
+			$_SESSION['user_email'] = $user->email;
+			$_SESSION['user_name'] = $user->name;
+			redirect('posts/index');
+		}
+
+		public function logout() {
+			unset($_SESSION['user_id']);
+			unset($_SESSION['user_email']);
+			unset($_SESSION['user_email']);
+			session_destroy();
+			redirect('users/login');
 		}
 	}
